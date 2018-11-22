@@ -67,21 +67,25 @@ class Inscripciones
             $countexisteinsrip=0;
             $existe= "<label class='text-success'></label><br />";
            // echo $worksheet->getHighestColumn()."<br>";
-            for($row=2; $row<=$highestRow; $row++)//se recorre todo el archivo excel
+            for($row=5; $row<=$highestRow; $row++)//se recorre todo el archivo excel
             {
                 $output='';
-                $periodo =trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());
-                $campus =trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
-                $division =trim($worksheet->getCellByColumnAndRow(2, $row)->getValue());
-                $facultad =  trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());
-                $programa =  trim($worksheet->getCellByColumnAndRow(4, $row)->getValue());
-                $tipo_doc =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());
-                $num_docu =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());
-                $apellidos = trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());
-                $nombres =   trim($worksheet->getCellByColumnAndRow(8, $row)->getValue());
-                $nacionalidad =  trim($worksheet->getCellByColumnAndRow(9, $row)->getValue());
-                $modalidad =  trim($worksheet->getCellByColumnAndRow(12, $row)->getValue());
-                $institucion_origen = trim( $worksheet->getCellByColumnAndRow(13, $row)->getValue());
+              
+                $codigo =trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());//codigo del convenio
+              //  $pais =trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
+              //  $ciudad =trim($worksheet->getCellByColumnAndRow(2, $row)->getValue());
+                //$codigo =  trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());//codigo del convenio
+                
+                $universidad =  strtoupper(preg_replace('([^A-Za-z])', '',trim($worksheet->getCellByColumnAndRow(4, $row)->getValue(), " \t\n\r\0\x0B")));;//la uinstitución con que esta el convenio
+                dd($universidad );
+                $objeto =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());//objetivo del convenio
+                $vigencia = trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());//vigencia
+                $fechaI =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//fecha inicio
+                $tituloC =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//titulo del convenio
+                $tipo =   trim($worksheet->getCellByColumnAndRow(8, $row)->getValue());//tipo del  convenio ya sea marco o especifico
+                $aplicaciones =  trim($worksheet->getCellByColumnAndRow(9, $row)->getValue());//aplicaciones de acuerdo al tipo
+                $facultades =  trim($worksheet->getCellByColumnAndRow(12, $row)->getValue());//facultades a las que afecta el convenio
+                $institucion_origen = trim( $worksheet->getCellByColumnAndRow(13, $row)->getValue());//division benefisiaria
                 $institucion_destino =  trim($worksheet->getCellByColumnAndRow(15, $row)->getValue());
                 $pais_destino = trim( $worksheet->getCellByColumnAndRow(16, $row)->getValue());
                 $fuentes_financiacion = trim( $worksheet->getCellByColumnAndRow(20, $row)->getValue());
