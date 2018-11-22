@@ -2,3 +2,4 @@ Vagrantfile
 vendor/*
 vendor/
 .idea/workspac
+composer.lock

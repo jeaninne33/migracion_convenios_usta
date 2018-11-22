@@ -75,8 +75,11 @@ class Inscripciones
               //  $pais =trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
               //  $ciudad =trim($worksheet->getCellByColumnAndRow(2, $row)->getValue());
                 //$codigo =  trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());//codigo del convenio
-                
-                $universidad =  strtoupper(preg_replace('([^A-Za-z])', '',trim($worksheet->getCellByColumnAndRow(4, $row)->getValue(), " \t\n\r\0\x0B")));;//la uinstitución con que esta el convenio
+                //([^A-Za-z\s])
+                //([^A-Za-z\s][Ññùûã])
+                $universidad =  strtoupper(preg_replace("([^A-Za-zÑñùûã\s\W])", '',trim($worksheet->getCellByColumnAndRow(1, $row)->getValue(), " \t\n\r\0\x0B")));;//la uinstitución con que esta el convenio
+                var_dump($universidad, $worksheet->getCellByColumnAndRow(1, $row)->getValue(), $codigo);
+                break;
                 dd($universidad );
                 $objeto =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());//objetivo del convenio
                 $vigencia = trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());//vigencia
