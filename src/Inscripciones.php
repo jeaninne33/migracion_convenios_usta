@@ -65,43 +65,90 @@ class Inscripciones
             $tabla="<label class='text-success'>DATA INSERT</label><br /><table class='table table-bordered'>";
             echo  $tabla; 
             $countexisteinsrip=0;
+            
             $existe= "<label class='text-success'></label><br />";
-           // echo $worksheet->getHighestColumn()."<br>";
-            for($row=5; $row<=$highestRow; $row++)//se recorre todo el archivo excel
+           // echo $worksheet->getHighestColumn()."<br>"; $highestRow
+            for($row=5; $row<=7; $row++)//se recorre todo el archivo excel
             {
                 $output='';
               
                 $codigo =trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());//codigo del convenio
-              //  $pais =trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
-              //  $ciudad =trim($worksheet->getCellByColumnAndRow(2, $row)->getValue());
-                //$codigo =  trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());//codigo del convenio
-                //([^A-Za-z\s])
-                //([^A-Za-z\s][Ññùûã])
-                $universidad =  strtoupper(preg_replace("([^A-Za-zÑñùûã\s\W])", '',trim($worksheet->getCellByColumnAndRow(1, $row)->getValue(), " \t\n\r\0\x0B")));;//la uinstitución con que esta el convenio
-                var_dump($universidad, $worksheet->getCellByColumnAndRow(1, $row)->getValue(), $codigo);
-                break;
-                dd($universidad );
-                $objeto =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());//objetivo del convenio
-                $vigencia = trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());//vigencia
-                $fechaI =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//fecha inicio
-                $tituloC =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//titulo del convenio
+                $universidad =  preg_replace("([^a-zA-ZñÑáéíóúÁÉÍÓÚ\s\W])", '',trim($worksheet->getCellByColumnAndRow(1, $row)->getValue(), " \t\n\r\0\x0B"));//,'utf-8');//la institución con que esta el convenio
+                $pais=preg_replace("([^a-zA-ZñÑáéíóúÁÉÍÓÚ\s\W])", '',trim($worksheet->getCellByColumnAndRow(2, $row)->getValue(), " \t\n\r\0\x0B"));//,'utf-8');// pais donde se encuentra la universidad 
+                $objeto =  trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());//objetivo del convenio
+                $vigencia = trim($worksheet->getCellByColumnAndRow(4, $row)->getValue());//vigencia
+                $duracion =  trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//duracion del convenio
+                $fechaI =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());//fecha inicio del convenio
+                $tituloC =  trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());//titulo del convenio
                 $tipo =   trim($worksheet->getCellByColumnAndRow(8, $row)->getValue());//tipo del  convenio ya sea marco o especifico
                 $aplicaciones =  trim($worksheet->getCellByColumnAndRow(9, $row)->getValue());//aplicaciones de acuerdo al tipo
-                $facultades =  trim($worksheet->getCellByColumnAndRow(12, $row)->getValue());//facultades a las que afecta el convenio
-                $institucion_origen = trim( $worksheet->getCellByColumnAndRow(13, $row)->getValue());//division benefisiaria
-                $institucion_destino =  trim($worksheet->getCellByColumnAndRow(15, $row)->getValue());
-                $pais_destino = trim( $worksheet->getCellByColumnAndRow(16, $row)->getValue());
-                $fuentes_financiacion = trim( $worksheet->getCellByColumnAndRow(20, $row)->getValue());
+                $facultades =  trim($worksheet->getCellByColumnAndRow(10, $row)->getValue());//programas beneficiados
+                $programas = trim( $worksheet->getCellByColumnAndRow(11, $row)->getValue());//falcultades beneficiarias
+
+                echo '<br>';
+                var_dump( $row,  $codigo,  $universidad,$pais,   !empty($codigo) && !empty($universidad) && !empty($pais) && !empty($objeto) && !empty($vigencia) && !empty($fechaI) && !empty($tituloC) && !empty($tipo) 
+                && !empty($aplicaciones) && !empty($facultades));
+                echo '<br>';
+
                // var_dump( $periodo, $campus,$division,$facultad,$programa,$tipo_doc,$num_docu,$apellidos,$nombres,$nacionalidad,$institucion_origen,$institucion_destino);
-                if(!empty($periodo) && !empty($campus) && !empty($division) && !empty($facultad) && !empty($programa) && !empty($tipo_doc) && !empty($num_docu) && !empty($apellidos) 
-                && !empty($nombres) && !empty($nacionalidad) && !empty($institucion_origen) && !empty($institucion_destino)){
-                   
-                        /*   $nameC = trim($times[0]['cliente_fac']);
-                        $tarifa = doubleval($times[0]['TARIFA']); */
-                    //validamos que existan los registros en la base de datos
-                    $checkperiod = $check->checkPeriod($periodo);
+                if(!empty($universidad) && !empty($pais) && !empty($objeto) && !empty($vigencia) && !empty($fechaI) && !empty($tituloC) && !empty($tipo) 
+                && !empty($aplicaciones) && !empty($facultades)){
+                    //se calcula la fecha fin del convenio
+                    $fechaF=date("Y-m-d",strtotime($fechaI."+ $duracion year"));
+                    // if(!empty($codigo)){
+                    //     $checkAlianza = $check->checkAlianza($codigo,$fechaI);
+                    //     if($checkAlianza!=0){
+                    //         $msj="Fila excel No. $row ; el convenio ya existe con el codigo ; codigo del convenio; $codigo  universidad; $universidad ";
+                    //         $log->error("  \r\n".$msj." \r\n");
+                    //         goto end;
+                    //     }
+                    // }
+                     //se inserta el convenio
+                    $sql="INSERT INTO alianza (codigo, objetivo, tipo_tramite_id, duracion, estado_id, fecha_inicio, campus_id, fecha_fin, migration) values ('$codigo','$objeto',1,'$duracion AÑOS',3,'$fechaI',1,'$fechaF',1 );";
+                    //se valida el pais
+                    $alianza_id=$inserts->InsertGeneral($sql);
+                    if(!isset($alianza_id) || empty($alianza_id)){
+                        goto end;
+                    }
+                    $log->info("  \r\n".'Convenio Insertado con exito; id; '. $alianza_id." ; universidad; $universidad  \r\n");
+                    $output.='<tr><td>';
+                    $output.="Convenio Insertado con exito; id; $alianza_id ; universidad ; $universidad ";
+                    $output.='</td></tr>';
+                    $checkCountry = $check->checkCountry($pais);
+                    if ($checkCountry==0) {// si no existe el pais
+                        //se prepatra la data para la creacion del pais
+                        $sql="INSERT INTO pais (nombre, nacionalidad) values ('".$pais."','$pais');";
+                        $pais_id=$inserts->InsertGeneral($sql);
+                        if(!isset($pais_id) || empty($pais_id)){
+                            goto end;
+                        }
+                        $log->info("  \r\n".'Pais Insertado con exito; id; '. $pais_id." ; nombre_pais; $pais  \r\n");
+                        $output.='<tr><td>';
+                        $output.="Pais Insertado con exito; id; $pais_id ; nombre_pais ; $pais ";
+                        $output.='</td></tr>';
+                    } else {// si existe el periodo
+                        $pais_id=$checkCountry[0]['id'];
+                    } 
+                     //se valida la institucion con la que se hizo el convenio
+                     $checkinstitucion = $check->checkInstitution($universidad);
+                     if ($checkinstitucion==0) {// si no existe la institucion_destino
+                         //se prepatra la data para la creacion de la institucion
+                         $universidad=mb_strtoupper($universidad, 'utf-8');
+                         $sql="INSERT INTO institucion (nombre, tipo_institucion_id, migration) values ('".$universidad."',7, 1);";
+                         $institucion_id=$inserts->InsertGeneral($sql);
+                         if(!isset($institucion_id) || empty($institucion_id)){
+                            goto end;
+                         }
+                         $log->info("  \r\n".'Institucion Insertada con exito; id; '. $institucion_id."  \r\n");
+                         $output.='<tr><td>';
+                         $output.="Institucion Insertada con exito; id; '. $institucion_id";
+                         $output.='</td></tr>';
+                     } else {// si existe la institucion
+                         $institucion_id=$checkinstitucion[0]['id'];
+                     }
+                    $checkInstitution = $check->checkInstitution($periodo);
                     //se valida el periodo   1
-                    if ($checkperiod==0) {// si no existe el periodo 
+                    if ($checkInstitution==0) {// si no existe la institución
                         //se prepatra la data para la creacion del periodo
                         $periodo1=explode('-',$periodo);
                         if($periodo1[1]==1){//si es el primer semestre del año
@@ -376,6 +423,9 @@ class Inscripciones
                         $output.='<br>';
                     echo  $output;                
                   
+                }else{
+                    $msj="Fila excel No. $row ; error campos vacios ; codigo del convenio; $codigo  universidad; $universidad ";
+                    $log->error("  \r\n".$msj." \r\n");
                 }  //fin si no esta vacia la fila 
             } //fin for 
             echo '</table>';

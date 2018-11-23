@@ -99,12 +99,9 @@ class Mysqlcheck
 
     }
 
-    public function checkinscripcion($user_id,$campus_id, $periodo_id, $modalidad_id,$institucion_id){
+    public function checkAlianza($codigo,$fechaI){
         try {
-            $sql="SELECT id FROM inscripcion WHERE user_id=$user_id and periodo_id=$periodo_id
-            and modalidad_id=$modalidad_id and institucion_destino_id=$institucion_id and 
-           campus_id=$campus_id and  tipo=0;";
-        
+            $sql="SELECT id FROM alianza WHERE codigo='$codigo' and fecha_inicio='$fechaI'";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result=$stmt->fetchAll();
