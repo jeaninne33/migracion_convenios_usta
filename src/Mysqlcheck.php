@@ -82,9 +82,25 @@ class Mysqlcheck
         }
 
     }
-    public function checkfacultad($name,$campus_id){
+    public function checkfacultad($name){
         try {
-            $sql="SELECT id FROM facultad WHERE nombre= '$name' and campus_id=$campus_id;";
+            $sql="SELECT id FROM facultad WHERE nombre= '$name'";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $result=$stmt->fetchAll();
+            if(count($result)>0){
+                return $result;
+            }else{
+                return 0;//array('error'=>'100','desc'=>"No existe EL usuario");
+            }
+        } catch (\PDOException $exception) {
+            print_r($exception->getMessage());
+        }
+
+    }
+    public function checkprograma($name){
+        try {
+            $sql="SELECT id FROM programa WHERE nombre= '$name';";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result=$stmt->fetchAll();
@@ -115,22 +131,7 @@ class Mysqlcheck
         }
 
     }
-    public function checkprograma($name){
-        try {
-            $sql='SELECT id FROM programa WHERE nombre= "'.$name.'";';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute();
-            $result=$stmt->fetchAll();
-            if(count($result)>0){
-                return $result;
-            }else{
-                return 0;//array('error'=>'100','desc'=>"No existe EL usuario");
-            }
-        } catch (\PDOException $exception) {
-            print_r($exception->getMessage());
-        }
-
-    }
+    
     public function checkPeriod($name){
         try {
             $sql="SELECT id, fecha_desde, fecha_hasta FROM periodo WHERE nombre='".$name."';";

@@ -2,7 +2,7 @@
 
 require_once 'vendor/autoload.php';
 
-use TM\Inscripciones;
+use TM\Convenios;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 set_time_limit(0);
 
@@ -49,7 +49,7 @@ error_reporting (E_ALL & ~ E_DEPRECATED & ~ E_NOTICE);
    <br />
    <?php
   
-   $inscripciones=new Inscripciones();
+   $convenios=new Convenios();
    $output = '';
    try{
             if(isset($_POST["import"])){
@@ -69,9 +69,8 @@ error_reporting (E_ALL & ~ E_DEPRECATED & ~ E_NOTICE);
                         
                         $objPHPExcel->setActiveSheetIndex(0);
                         $worksheet=$objPHPExcel->getActiveSheet();
-                        $output.= $inscripciones->fetchAllinscripcion($worksheet);
-                            
-                    $output .= '</table>';
+                        $output.= $convenios->fetchAllconvenio($worksheet);
+                        $output .= '</table>';
                     }
                     else
                     {
