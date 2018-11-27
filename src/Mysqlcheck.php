@@ -66,9 +66,9 @@ class Mysqlcheck
         }
 
     }
-    public function checkUsersDatos($ci){
+    public function checkAplication($name){
         try {
-            $sql='SELECT id FROM datos_personales WHERE numero_documento= "'.$ci.'";';
+            $sql="SELECT id FROM aplicaciones WHERE nombre= '$name';";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $result=$stmt->fetchAll();
