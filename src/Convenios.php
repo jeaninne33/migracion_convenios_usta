@@ -50,7 +50,7 @@ class Convenios
             $countInsert=0;
             $countError=0;
             $highestRow = $worksheet->getHighestRow();//total de registros filas de la hoja
-            $tabla="<label class='text-success'>DATA INSERT</label><br /><table class='table table-bordered'>";
+            $tabla="<label class='text-success'>DATOS INSERTADOS DEL CONVENIO</label><br /><table class='table table-bordered'>";
             echo  $tabla; 
             date_default_timezone_set('America/Bogota');
             $fecha_hoy=date("Y-m-d h:i:s");
@@ -63,7 +63,7 @@ class Convenios
                 $codigo =trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());//codigo del convenio
                 $pais=preg_replace("([^a-zA-ZñÑáéíóúÁÉÍÓÚ\s\W])", '',trim($worksheet->getCellByColumnAndRow(2, $row)->getValue(), " \t\n\r\0\x0B"));//,'utf-8');// pais donde se encuentra la universidad 
                 $universidad =  preg_replace("([^a-zA-ZñÑáéíóúÁÉÍÓÚ\s\W])", '',trim($worksheet->getCellByColumnAndRow(3, $row)->getValue(), " \t\n\r\0\x0B"));//,'utf-8');//la institución con que esta el convenio
-                $objeto =  trim($worksheet->getCellByColumnAndRow(4, $row)->getValue());//objetivo del convenio
+                $objeto =  trim($worksheet->getCellByColumnAndRow(4, $row)->getValue(),"'");//objetivo del convenio
                 $vigencia = trim($worksheet->getCellByColumnAndRow(5, $row)->getValue());//vigencia
                 $duracion =  trim($worksheet->getCellByColumnAndRow(6, $row)->getValue());//duracion del convenio
                 $fechaI =  trim($worksheet->getCellByColumnAndRow(7, $row)->getValue());//fecha inicio del convenio
@@ -73,8 +73,8 @@ class Convenios
                 $programas =  trim($worksheet->getCellByColumnAndRow(11, $row)->getValue());//programas beneficiados
                 $facultades = trim( $worksheet->getCellByColumnAndRow(12, $row)->getValue());//falcultades beneficiarias
 
-                if(!empty($universidad) && !empty($pais) && !empty($objeto) && !empty($duracion) && !empty($fechaI) && !empty($tituloC) && !empty($tipo) 
-                && !empty($facultades)){// && !empty($aplicaciones)
+                if(!empty($universidad) && !empty($pais) && !empty($objeto) && !empty($duracion) && !empty($fechaI) && !empty($campus) && !empty($tipo) 
+                && !empty($aplicaciones)){// && !empty($aplicaciones)
                     //se calcula la fecha fin del convenio
                     if($fechaI!='Sin fecha'){
                         if($duracion=='Indefinida'){
@@ -191,7 +191,11 @@ class Convenios
                     $facultades=explode("\n", $facultades);
                     foreach($facultades as $facultad){
                          $facultad=mb_strtoupper($facultad, 'utf-8');
-                        $checkfacultad = $check->checkfacultad($facultad);//se verifica si existe la facultad
+                         if($facultad=="TODAS LAS DIVISIONES"){
+                            $checkfacultad=$check->checkFacultadCampus($campus_id);
+                         }else{
+                            $checkfacultad = $check->checkfacultad($facultad, $campus_id);//se verifica si existe la facultad
+                         }                       
                         if ($checkfacultad==0) {
                             $msj="Fila excel No. $row ; no se encontro la division; $facultad ";
                             $log->error("  \r\n".$msj." \r\n");
@@ -231,7 +235,14 @@ class Convenios
                     $programas=explode(",", $programas);
                     foreach($programas as $programa){
                         $programa=mb_strtoupper($programa, 'utf-8');
-                        $checkprograma = $check->checkprograma($programa);//se verifica si existe la programa
+                        $facultad=mb_strtoupper($facultad, 'utf-8');
+                        //$facultades_id=implode(",", array_column($checkfacultad, 'id'));
+                         if($facultad=="TODAS LAS FACULTADES"){
+                            $checkprograma=$check->checkProgramafacultad($campus_id);
+                         }else{
+                            $checkprograma = $check->checkprograma($programa,$campus_id );//se verifica si existe la programa
+                         }    
+                       
                         if ($checkprograma==0) {// si no existe la programa
                             $msj="Fila excel No. $row ; no se encontro el programa; $programa ";
                             $log->error("  \r\n".$msj." \r\n");
@@ -293,7 +304,7 @@ class Convenios
                         $output.='</td></tr>';
                     } 
                     end:
-                        $output.='<br>';
+                        
                         if($error>0){
                             $this->pdo->rollBack();
                         }else{
@@ -301,7 +312,8 @@ class Convenios
                         }
                     echo  $output;                
                   
-                }else{
+                }elseif((empty($universidad) && empty($pais) && empty($objeto) && empty($duracion) && empty($fechaI) && empty($campus) && empty($tipo) 
+                && empty($aplicaciones))==false){
                     $msj="Fila excel No. $row ; error campos vacios ; codigo del convenio; $codigo  universidad; $universidad ";
                     $log->error("  \r\n".$msj." \r\n");
                 }  //fin si no esta vacia la fila 

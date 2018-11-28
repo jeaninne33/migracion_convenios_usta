@@ -38,9 +38,9 @@ error_reporting (E_ALL & ~ E_DEPRECATED & ~ E_NOTICE);
  </head>
  <body>
   <div class="container box">
-   <h3 align="center">Import Excel to Mysql using PHPExcel in PHP  AGREEMENTS DATA USTA</h3><br />
+   <h3 align="center">Importar Excel a Mysql CONVENIOS USTA</h3><br />
    <form method="post" enctype="multipart/form-data">
-    <label>Select Excel File</label>
+    <label>Selecciona el archivo de excel</label>
     <input type="file" name="excel" id="excel" />
     <br />
     <input type="submit" name="import" class="btn btn-info" value="Import" />
