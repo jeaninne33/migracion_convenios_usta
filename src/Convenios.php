@@ -202,7 +202,7 @@ class Convenios
                             $checkfacultad = $check->checkfacultad($facultad, $campus_id);//se verifica si existe la facultad
                          }                       
                         if ($checkfacultad==0) {
-                            $msj="Fila excel No. $row ; no se encontro la division; $facultad ";
+                            $msj="Fila excel No. $row ; no se encontro la division; $facultad ;campus: $campus; campus_id: $campus_id";
                             $log->error("  \r\n".$msj." \r\n");
                             $output.='<tr><td>';
                             $output.=  $msj;
@@ -249,7 +249,7 @@ class Convenios
                          }    
                        
                         if ($checkprograma==0) {// si no existe la programa
-                            $msj="Fila excel No. $row ; no se encontro el programa; $programa ";
+                            $msj="Fila excel No. $row ; no se encontro el programa; $programa ; campus: $campus; campus_id: $campus_id";
                             $log->error("  \r\n".$msj." \r\n");
                             $output.='<tr><td>';
                             $output.=  $msj;
