@@ -13,12 +13,12 @@ class ConnectionMySQL
     /**
      * @var string
      */
-    const PORT = '3306';
+    const PORT = '3309';
 
     /**
      * @var string
      */
-    const DB_NAME = 'usta_migracion';
+    const DB_NAME = 'usta_clean2';
 
     /**
      * @var string
@@ -38,7 +38,7 @@ class ConnectionMySQL
     {
         try {
             return new \PDO(
-                "mysql:host=".self::HOST.";dbname=".self::DB_NAME.";charset=utf8",
+                "mysql:host=".self::HOST.";port=".self::PORT.";dbname=".self::DB_NAME.";charset=utf8",
                 self::USERNAME,
                 self::PASSWORD,
                 [

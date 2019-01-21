@@ -128,18 +128,23 @@ class Convenios
                     $output.='</td></tr>';
                     $checkCountry = $check->checkCountry($pais);
                     if ($checkCountry==0) {// si no existe el pais
-                        $pais=mb_strtoupper($pais, 'utf-8');
-                        //se prepatra la data para la creacion del pais
-                        $sql="INSERT INTO pais (nombre, nacionalidad, created_at ) values ('".$pais."','$pais','$fecha_hoy');";
-                        $pais_id=$inserts->InsertGeneral($sql);
-                        if(!isset($pais_id) || empty($pais_id)){
-                            $error++;
-                            goto end;
+                        if($pais=='PUERTO RICO'){
+                            $pais_id=229;
+                        }else{
+                            $pais=mb_strtoupper($pais, 'utf-8');
+                            //se prepatra la data para la creacion del pais
+                            $sql="INSERT INTO pais (nombre, nacionalidad, created_at ) values ('".$pais."','$pais','$fecha_hoy');";
+                            $pais_id=$inserts->InsertGeneral($sql);
+                            if(!isset($pais_id) || empty($pais_id)){
+                                $error++;
+                                goto end;
+                            }
+                            $log->info("  \r\n".'Pais Insertado con exito; id; '. $pais_id." ; nombre_pais; $pais  \r\n");
+                            $output.='<tr><td>';
+                            $output.="Pais Insertado con exito; id; $pais_id ; nombre_pais ; $pais ";
+                            $output.='</td></tr>';
                         }
-                        $log->info("  \r\n".'Pais Insertado con exito; id; '. $pais_id." ; nombre_pais; $pais  \r\n");
-                        $output.='<tr><td>';
-                        $output.="Pais Insertado con exito; id; $pais_id ; nombre_pais ; $pais ";
-                        $output.='</td></tr>';
+                       
                     } else {// si existe el periodo
                         $pais_id=$checkCountry[0]['id'];
                     } 
@@ -232,7 +237,7 @@ class Convenios
                     }//fin foreach 
 
                     //se valida el programa en caso de usta la facultad
-                    $programas=explode(",", $programas);
+                    $programas=explode("\n", $programas);
                     foreach($programas as $programa){
                         $programa=mb_strtoupper($programa, 'utf-8');
                         $facultad=mb_strtoupper($facultad, 'utf-8');
